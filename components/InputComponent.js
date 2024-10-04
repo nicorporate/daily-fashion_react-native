@@ -26,7 +26,7 @@ export const InputComponent = (props) => {
           }
         ]}
         multiline={true}
-        placeholderTextColor='gray'
+        placeholderTextColor='black'
         {...props}
       />
     </View>
