@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import {View, Text, TouchableOpacity, Image, ScrollView, StyleSheet} from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import {View, Text, TouchableOpacity, Image, ScrollView, StyleSheet, Alert} from 'react-native';
 import ImagePicker  from 'react-native-image-crop-picker';
 import { InputComponent } from '../../components/InputComponent';
+import SelectDropdown from 'react-native-select-dropdown';
+import { categoryList } from '../data/Data';
+import realm from '../store/realm';
 
 
 const AddProductScreen = () => {
@@ -15,6 +18,7 @@ const AddProductScreen = () => {
     facebook: '',
     phoneNumber: ''
   });
+  const dropdownRef = useRef({});
 
   const addImage = () => {
     ImagePicker.openPicker({
@@ -37,6 +41,46 @@ const AddProductScreen = () => {
       ...productData,
       [type]: value
     });
+  };
+
+  const saveData = () => {
+    if (productData.productName === '' || productData.imagePath === '' || productData.description === '' || productData.price === '' || productData.category === null) {
+      alert('Please fill all your product information!');
+    } else if (productData.phoneNumber === '' && productData.instagram === '' && productData.facebook === '') {
+        alert('Please fill at least one seller contact!');
+      } else {
+        const allData = realm.objects('Product');
+        const lastId =
+          allData.length === 0 ?
+            0
+            :
+            allData[allData.length - 1].id;
+        realm.write(() => {
+          realm.create('Product', {
+            id: lastId + 1,
+            productName: productData.productName,
+            imagePath: productData.imagePath,
+            category: productData.category,
+            description: productData.description,
+            price: parseInt(productData.price),
+            instagram: productData.instagram,
+            facebook: productData.facebook,
+            phoneNumber: productData.phoneNumber
+          });
+        });
+        Alert.alert('Button Pressed!', 'Data Saved!.');
+        setProductData({
+          productName: '',
+          imagePath: '',
+          category: null,
+          description: '',
+          price: '',
+          instagram: '',
+          facebook: '',
+          phoneNumber: ''
+        });
+        dropdownRef.current.reset();
+    };
   };
 
   useEffect(() => {
@@ -64,10 +108,26 @@ const AddProductScreen = () => {
           <View style={styles.horizontalContainer}>
             <InputComponent
               placeholder='Product Name'
-            value={productData.productName}
-            onChangeText={(text) =>
+              value={productData.productName}
+              onChangeText={(text) =>
               onInputChange('productName', text)}
- />
+            />
+            <SelectDropdown
+              data={categoryList}
+              defaultButtonText='Select category'
+              onSelect={(item) => {
+                onInputChange('category', item.id)
+              }}
+              buttonTextAfterSelection={(item) => {
+                return item.name
+              }}
+              rowTextForSelection={(item) => {
+                return item.name
+              }}
+              buttonStyle={styles.selectDropdown}
+              ref={dropdownRef}
+              buttonTextStyle={styles.selectText}
+            />
           </View>
           <View style={styles.horizontalContainer}>
             <InputComponent
@@ -111,7 +171,7 @@ const AddProductScreen = () => {
             type="font-awesome"
           />
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.saveButton}>
+            <TouchableOpacity style={styles.saveButton} onPress={saveData}>
               <Text style={styles.saveText}>SAVE</Text>
             </TouchableOpacity>
           </View>
@@ -169,6 +229,16 @@ const styles = StyleSheet.create({
   },
   saveText: {
     color: 'black'
+  },
+  selectDropdown: {
+    borderRadius: 10,
+    backgroundColor: 'skyblue',
+    width: 150,
+    height: 30,
+    marginLeft: 8
+  },
+  selectText: {
+    fontSize: 12
   }
 
 })
