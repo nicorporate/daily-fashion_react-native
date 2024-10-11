@@ -7,7 +7,8 @@ import Carousel from 'react-native-snap-carousel';
 // const { width: screenWidth } = Dimensions.get('window');
 const { width: screenWidth, height: viewportHeight } = Dimensions.get('window');
 
-const HomeScreen = () => {
+const HomeScreen = (props) => {
+    const {navigation} = props;
     const [entries, setEntries] = useState([
         { id: '1', image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c2hvcHBpbmd8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60' },
         { id: '2', image: 'https://media.istockphoto.com/photos/tourist-woman-with-backpack-rear-view-picture-id1212702893?b=1&k=20&m=1212702893&s=170667a&w=0&h=0H3fStHp4Cspdyyd0Mrv2P-OT-bVxSh_CPIggBFAWPA=' },
@@ -60,6 +61,7 @@ const HomeScreen = () => {
                         return (
                             <TouchableOpacity
                                 style={styles.button}
+                                onPress={() => navigation.navigate('ShowProduct', { categoryId: item.id })}
                             >
                                 <Image
                                     source={{ uri: item.icon }}
