@@ -5,7 +5,7 @@ import { categoryList, imageSlider } from '../data/Data';
 import Carousel from 'react-native-snap-carousel';
 
 // const { width: screenWidth } = Dimensions.get('window');
-const { width: screenWidth } = Dimensions.get('window');
+const { width: screenWidth, height: viewportHeight } = Dimensions.get('window');
 
 const HomeScreen = () => {
     const [entries, setEntries] = useState([
@@ -33,18 +33,14 @@ const HomeScreen = () => {
                 circleLoop={true}
                 sliderBoxHeight={250}
             /> */}
-                <View style={styles.titleContainer}>
-                    <Text style={styles.text}>
-                        Overview
-                    </Text>
-                </View>
                 <Carousel
                     ref={carouselRef}
                     data={entries}
                     renderItem={renderItem}
                     sliderWidth={screenWidth}
-                    itemWidth={screenWidth * 0.9}
-                    layout={'default'}
+                    itemWidth={screenWidth * 0.7}
+                    layout={'stack'}
+                    layoutCardOffset={18}
                     autoplay={true}
                     loop={true}
                 />
