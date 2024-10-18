@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   sellerText: {
-    fontSize: hp('5%'),
+    fontSize: hp('3.5%'),
     fontWeight: 'bold',
     marginTop: 16,
     marginLeft: 8,
@@ -237,13 +237,13 @@ const styles = StyleSheet.create({
   selectDropdown: {
     borderRadius: 10,
     backgroundColor: 'skyblue',
-    width: wp('25%'),
+    width: wp('45%'),
     height: hp('10%'),
     marginLeft: 8,
     fontSize: hp('1.5%')
   },
   selectText: {
-    fontSize: hp('4%')
+    fontSize: hp('2%')
   }
 
 })

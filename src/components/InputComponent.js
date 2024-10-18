@@ -15,7 +15,7 @@ export const InputComponent = (props) => {
       {
         isIcon ?
           <Icon
-            size={hp('8%')}
+            size={hp('4%')}
             {...props}
           />
           :

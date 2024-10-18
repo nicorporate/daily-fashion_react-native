@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     marginLeft: 8
   },
   image: {
-    width: wp('5%'), 
-    height: hp('10%')
+    width: wp('10%'), 
+    height: hp('5%')
   }
 });

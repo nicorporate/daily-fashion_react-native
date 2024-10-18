@@ -191,12 +191,12 @@ const styles = StyleSheet.create({
   },
     title: {
         color: 'black',
-        fontSize: hp('5%'),
+        fontSize: hp('3%'),
         fontWeight: 'bold'
   },
     text: {
         color: 'black',
-        fontSize: hp('5%')
+        fontSize: hp('3%')
   },
   modalContainer: {
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
