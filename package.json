@@ -26,6 +26,7 @@
     "react-native-image-slider-box": "^2.0.7",
     "react-native-reanimated": "^2.10.0",
     "react-native-reanimated-carousel": "^3.0.4",
+    "react-native-responsive-screen-hooks": "^1.4.2",
     "react-native-safe-area-context": "^3.1.9",
     "react-native-screens": "^3.14.0",
     "react-native-select-dropdown": "^2.0.4",

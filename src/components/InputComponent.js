@@ -1,6 +1,10 @@
 import React from 'react';
 import { View, TextInput, StyleSheet } from 'react-native';
 import { Icon } from 'react-native-elements';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp
+ } from 'react-native-responsive-screen-hooks';
 
 export const InputComponent = (props) => {
 
@@ -11,7 +15,7 @@ export const InputComponent = (props) => {
       {
         isIcon ?
           <Icon
-            size={20}
+            size={hp('8%')}
             {...props}
           />
           :
@@ -45,5 +49,6 @@ const styles = StyleSheet.create({
     textAlignVertical: 'bottom',
     fontSize: 16,
     width: '100%',
+    color: 'gray'
   }
 });

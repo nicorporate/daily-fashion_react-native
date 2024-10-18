@@ -3,6 +3,10 @@ import {View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Dimensions} f
 import { categoryList, imageSlider } from '../data/Data';
 // import { SliderBox } from 'react-native-image-slider-box';
 import Carousel from 'react-native-snap-carousel';
+import {
+    widthPercentageToDP as wp,
+    heightPercentageToDP as hp
+   } from 'react-native-responsive-screen-hooks';
 
 // const { width: screenWidth } = Dimensions.get('window');
 const { width: screenWidth, height: viewportHeight } = Dimensions.get('window');
@@ -39,6 +43,7 @@ const HomeScreen = (props) => {
                     data={entries}
                     renderItem={renderItem}
                     sliderWidth={screenWidth}
+                    sliderHeight={hp('30%')}
                     itemWidth={screenWidth * 0.7}
                     layout={'stack'}
                     layoutCardOffset={18}
@@ -87,7 +92,7 @@ const HomeScreen = (props) => {
         alignItems: 'center'
     },
     text: {
-        fontSize: 18,
+        fontSize: hp('5%'),
         fontWeight: 'bold',
         color: 'black'
     },
@@ -100,13 +105,13 @@ const HomeScreen = (props) => {
         borderWidth: 1,
         borderColor: '#7CAF58',
         borderRadius: 10,
-        height: 130,
+        height: hp('17%'),
         justifyContent: 'center',
         alignItems: 'center'
      },
     icon: {
-        width: 100,
-        height: 100,
+        width: wp('20%'),
+        height: hp('12%'),
         resizeMode: 'contain'
     },
     itemName: {
