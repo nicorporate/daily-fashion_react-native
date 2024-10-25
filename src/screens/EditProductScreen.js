@@ -11,7 +11,7 @@ import {
  } from 'react-native-responsive-screen-hooks';
 
 
-const AddProductScreen = () => {
+const EditProductScreen = (props) => {
   const [productData, setProductData] = useState({
     productName: '',
     imagePath: '',
@@ -23,6 +23,9 @@ const AddProductScreen = () => {
     phoneNumber: ''
   });
   const dropdownRef = useRef({});
+  const { route } = props;
+  const {navigation} = props;
+  const idProduct = route.params.idProduct
 
   const addImage = () => {
     ImagePicker.openPicker({
@@ -52,44 +55,63 @@ const AddProductScreen = () => {
       alert('Please fill all your product information!');
     } else if (productData.phoneNumber === '' && productData.instagram === '' && productData.facebook === '') {
         alert('Please fill at least one seller contact!');
-      } else {
-        const allData = realm.objects('Product');
-        const lastId =
-          allData.length === 0 ?
-            0
-            :
-            allData[allData.length - 1].id;
-        realm.write(() => {
-          realm.create('Product', {
-            id: lastId + 1,
-            productName: productData.productName,
-            imagePath: productData.imagePath,
-            category: productData.category,
-            description: productData.description,
-            price: parseInt(productData.price),
-            instagram: productData.instagram,
-            facebook: productData.facebook,
-            phoneNumber: productData.phoneNumber
-          });
+    } else {
+      const updatedData = realm.objects('Product').filtered(`id = ${idProduct} `)[0];
+
+      if(
+          updatedData.productName === productData.productName &&
+          updatedData.imagePath === productData.imagePath &&
+          updatedData.category === productData.category &&
+          updatedData.description === productData.description &&
+          updatedData.price === parseInt(productData.price) &&
+          updatedData.instagram === productData.instagram &&
+          updatedData.facebook === productData.facebook &&
+          updatedData.phoneNumber === productData.phoneNumber 
+      ) {
+        Alert.alert(
+          "Failed Update",
+          "Nothing to update!",
+          [{
+          text: "OK", onPress: () => navigation.goBack()
+          }]
+       );
+      } else{
+          realm.write(() => {
+            updatedData.productName = productData.productName;
+            updatedData.imagePath = productData.imagePath;
+            updatedData.category = productData.category;
+            updatedData.description = productData.description;
+            updatedData.price = parseInt(productData.price);
+            updatedData.instagram = productData.instagram;
+            updatedData.facebook = productData.facebook;
+            updatedData.phoneNumber = productData.phoneNumber;
         });
-        Alert.alert('Button Pressed!', 'Data Saved!.');
-        setProductData({
-          productName: '',
-          imagePath: '',
-          category: null,
-          description: '',
-          price: '',
-          instagram: '',
-          facebook: '',
-          phoneNumber: ''
-        });
-        dropdownRef.current.reset();
-    };
+        Alert.alert(
+            "Success",
+            "Successfully update your product information!",
+            [{
+            text: "OK", onPress: () => navigation.goBack()
+            }]
+        );
+      }
+    }
   };
 
   useEffect(() => {
-    console.log(productData);
-  }, [productData]);
+    // console.log(productData);
+    const data = realm.objects('Product').filtered(`id = ${idProduct}`)[0];
+        setProductData({
+            productName: data.productName,
+            imagePath: data.imagePath,
+            category: data.category,
+            description: data.description,
+            price: String(data.price),
+            instagram: data.instagram,
+            facebook: data.facebook,
+            phoneNumber: data.phoneNumber
+        });
+        
+  }, [idProduct]);
 
     return (
         <View style={styles.mainContainer}>
@@ -129,7 +151,8 @@ const AddProductScreen = () => {
                 return item.name
               }}
               buttonStyle={styles.selectDropdown}
-              ref={dropdownRef}
+            //   ref={dropdownRef}
+              defaultValueByIndex={productData.category - 1}
               buttonTextStyle={styles.selectText}
             />
           </View>
@@ -178,7 +201,7 @@ const AddProductScreen = () => {
           />
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.saveButton} onPress={saveData}>
-              <Text style={styles.saveText}>SAVE</Text>
+                <Text style={styles.saveText}>EDIT</Text>
             </TouchableOpacity>
           </View>
 
@@ -252,5 +275,5 @@ const styles = StyleSheet.create({
 
 
   
-  export default AddProductScreen;
+  export default EditProductScreen;
 

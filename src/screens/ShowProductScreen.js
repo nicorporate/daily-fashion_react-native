@@ -59,6 +59,7 @@ const ShowProductScreen = (props) => {
                     return (
                         <TouchableOpacity
                             style={styles.itemButton}
+                            onPress={() => navigation.navigate('EditProduct', {idProduct: item.id})}
                         >
                             <View style={styles.productContainer}>
                                 <TouchableOpacity onPress={() => navigation.navigate('ImageZoom', { imagePath: item.imagePath })}>
