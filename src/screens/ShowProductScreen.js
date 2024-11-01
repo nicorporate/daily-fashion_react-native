@@ -1,12 +1,14 @@
 import React, {useEffect, useState, useRef} from 'react';
 import {View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Linking} from 'react-native';
 import realm from '../store/realm';
-import { Icon } from 'react-native-elements';
+import { Icon, CheckBox } from 'react-native-elements';
 import { MediaComponent } from '../components/MediaComponent';
 import {
     widthPercentageToDP as wp,
-    heightPercentageToDP as hp
-   } from 'react-native-responsive-screen-hooks';
+    heightPercentageToDP as hp 
+} from 'react-native-responsive-screen-hooks';
+import { ButtonComponent } from '../components/ButtonComponent';
+
 
 const ShowProductScreen = (props) => {
     const { navigation } = props;
@@ -19,11 +21,16 @@ const ShowProductScreen = (props) => {
         instagram: "",
         facebook: ""
     });
+    const [isRemove, setIsRemove] = useState(false);
     
     const collectData = () => {
-        const allData = realm.objects('Product')
-            .filtered(`category = ${category}`);
+        const allData = realm.objects('Product').filtered(`category = ${category}`);
+        const newData = allData.map((item) => {
+            item.checkedStatus = true;
+            return item;
+        })
         setData(allData);
+        console.log(newData)
     };
     const buyProduct = (whatsapp, instagramId, facebookId) => {
         setContact({
@@ -33,6 +40,7 @@ const ShowProductScreen = (props) => {
          });
         setIsBuy(true);
     };
+
     const onClickMedia = (type) => {
         if (type === 'whatsapp') {
           Linking.openURL(`https://wa.me/${contact.phoneNumber} `);
@@ -43,12 +51,56 @@ const ShowProductScreen = (props) => {
         }
     };
 
+    const setCheckBox = (id, status) => {
+        const newData = data.map((item) => {
+            if (item.id === id) {
+                item.checkedStatus = !status;
+            }
+            return item;
+        });
+        setData(newData)
+    };
+
+    const onCancel = () => {
+        const newData = data.map((item) => {
+            item.checkedStatus = false;
+            return item;
+        })
+        setData(data);
+        setIsRemove(false);
+    }
+
+    const onDelete = () => {
+        const checkedTrue = [];
+        data.forEach((item) => {
+          if (item.checkedStatus) {
+            checkedTrue.push(item.id)
+          }
+        });
+        if (checkedTrue.length != 0) {
+          realm.write(() => {
+            for (i = 0; i < checkedTrue.length; i++) {
+              const removeData = realm.
+                objects('Product').filtered(`id = ${checkedTrue[i]}`);
+              realm.delete(removeData);
+            }
+          });
+          alert('Successfully remove the products!');
+          setIsRemove(false);
+          collectData();
+        } else {
+          alert('Nothing to remove!');
+        }
+      };
+
+
     useEffect(() => {
         const productPage = navigation.addListener('focus', () => {
             collectData();
         });
         return productPage;
     }, []);
+
     return (
         <View style={styles.mainContainer}>
             <FlatList
@@ -60,6 +112,7 @@ const ShowProductScreen = (props) => {
                         <TouchableOpacity
                             style={styles.itemButton}
                             onPress={() => navigation.navigate('EditProduct', {idProduct: item.id})}
+                            onLongPress={() => setIsRemove(true)}
                         >
                             <View style={styles.productContainer}>
                                 <TouchableOpacity onPress={() => navigation.navigate('ImageZoom', { imagePath: item.imagePath })}>
@@ -80,7 +133,31 @@ const ShowProductScreen = (props) => {
                                     </Text>
                                 </View>
                             </View>
-                            <TouchableOpacity
+                            {
+                                isRemove ?
+                                    <CheckBox
+                                        size={30}
+                                        containerStyle={styles.checkBox}
+                                        onPress={() => setCheckBox(item.id, item.checkedStatus)}
+                                        checked={item.checkedStatus}
+                                    />
+                                    :
+                                    <TouchableOpacity
+                                        onPress={() => buyProduct(
+                                            item.phoneNumber,
+                                            item.instagram,
+                                            item.facebook)
+                                        }
+                                    >
+                                        <Icon
+                                            name="shoppingcart"
+                                            type="antdesign"
+                                            size={30}
+                                        />
+                                    </TouchableOpacity>
+                                }
+
+                            {/* <TouchableOpacity
                                 onPress={() => buyProduct(item.phoneNumber, item.instagram, item.facebook)}
                             >
                                 <Icon
@@ -88,7 +165,7 @@ const ShowProductScreen = (props) => {
                                     type="antdesign"
                                     size={30}
                                 />
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
                         </TouchableOpacity>
                     )
                 }}
@@ -155,6 +232,24 @@ const ShowProductScreen = (props) => {
                 :
                 null
             }
+            {
+                isRemove?
+                    <View style={styles.buttonContainer}>
+                        <ButtonComponent
+                            backgroundColor="red"
+                            title="Delete"
+                            onPress={() => onDelete()}
+                        />
+                        <ButtonComponent
+                            backgroundColor="green"
+                            title="Cancel"
+                            onPress={() => onCancel()}
+                        />
+                    </View>
+                    :
+                    null
+            }
+
         </View>
     )
 }
@@ -224,7 +319,15 @@ const styles = StyleSheet.create({
   sellerText: {
     marginBottom: 8,
     marginTop: 32
-  }
+  },
+  checkBox: {
+    position: 'absolute',
+    right: 0
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+   height: hp('7%'),
+  },
 });
 
 export default ShowProductScreen;
